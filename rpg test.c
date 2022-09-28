@@ -7,31 +7,26 @@ int main(void)
 	// Player and Monster stats
 	char playerName[10];
 	int playerHP = 150;
-	int playerSTR = 15000;
+	int playerSTR = 20;
 	int playerDEX = 10;
 
-	const char spider[6] = "Spider";
 	const int spiderHP = 60;
 	const int spiderSTR = 5;
 	const int spiderDEX = 60;
 
-	const char troll[5] = "Troll";
 	const int trollHP = 100;
-	const int trollSTR = 20;
+	const int trollSTR = 25;
 	const int trollDEX = 5;
 
-	const char scorpion[8] = "Scorpion";
 	const int scorpionHP = 75;
 	const int scorpionSTR = 0;
 	const int scorpionDEX = 25;
 
-	const char dragon[6] = "Dragon";
-	const int dragonHP = 500;
-	const int dragonSTR = 50;
+	const int dragonHP = 350;
+	const int dragonSTR = 40;
 	const int dragonDEX = 40;
 
 	// Current enemy stats
-	char enemy;
 	int enemyHP;
 	int enemySTR;
 	int enemyDEX;
@@ -101,7 +96,6 @@ int main(void)
 		else if (playerChoice == 'C')
 		{
 			rounds = 0;
-			enemy = spider;
 			enemyHP = spiderHP;
 			enemySTR = spiderSTR;
 			enemyDEX = spiderDEX;
@@ -182,7 +176,6 @@ int main(void)
 		else if (playerChoice == 'B')
 		{
 			rounds = 0;
-			enemy = scorpion;
 			enemyHP = scorpionHP;
 			enemySTR = scorpionSTR;
 			enemyDEX = scorpionDEX;
@@ -264,7 +257,6 @@ int main(void)
 		else if (playerChoice == 'F')
 		{
 			rounds = 0;
-			enemy = troll;
 			enemyHP = trollHP;
 			enemySTR = trollSTR;
 			enemyDEX = trollDEX;
@@ -350,7 +342,6 @@ int main(void)
 		else if (playerChoice == 'A' && mapA >= 1 && mapB >= 1 && keys >= 1)
 		{
 		rounds = 0;
-		enemy = dragon;
 		enemyHP = dragonHP;
 		enemySTR = dragonSTR;
 		enemyDEX = dragonDEX;
