@@ -231,7 +231,8 @@ int main(void)
 				{
 
 				}
-				printf("\nThe scorpion has struck you you for %d damage!", enemySTR + (rounds * 5));
+				enemySTR = rounds * 5;
+				printf("\nThe scorpion has struck you you for %d damage!", enemySTR);
 				playerHP = playerHP - enemySTR;
 				printf("\nYour current HP is %d\n", playerHP);
 
