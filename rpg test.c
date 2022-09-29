@@ -8,7 +8,7 @@ int main(void)
 	char playerName[10];
 	int playerHP = 150;
 	int playerSTR = 20;
-	int playerDEX = 50;
+	int playerDEX = 15;
 
 	const int spiderHP = 60;
 	const int spiderSTR = 5;
