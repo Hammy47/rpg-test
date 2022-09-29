@@ -8,7 +8,7 @@ int main(void)
 	char playerName[10];
 	int playerHP = 250;
 	int playerSTR = 20;
-	int playerDEX = 50;
+	int playerDEX = 15;
 
 	const char spider = "Spider";
 	const int spiderHP = 60;
@@ -45,6 +45,10 @@ int main(void)
 	const int giantFrogSTR = 15;
 	const int giantFrogDEX = 0;
 
+	// Locations
+	char thickForest;
+	char ancientRuins;
+
 	// Player actions
 	char playerChoice;
 	char playerAction;
@@ -66,11 +70,11 @@ int main(void)
 	int vampireHeal;
 
 	// Stats
-	int forestCount;
-	int goblinKills;
-	int banditKills;
-	int vampireKills;
-	int giantFrogKills;
+	int forestCount = 0;
+	int goblinKills = 0;
+	int banditKills = 0;
+	int vampireKills = 0;
+	int giantFrogKills = 0;
 
 	// Consumables
 	int playerPotions = 3;
@@ -117,18 +121,21 @@ int main(void)
 		else {
 			printf("\nAs the sun rises at your camp, you have to decide what you're planning on doing today.\n"
 				"+--------+---------+\n"
-				"|  REST  |  CAVES  |\n"
+				"| SLEEP  |  CAVES  |\n"
 				"+--------+---------+\n"
 				"| FOREST | BARRENS |\n"
-				"+--------+---------+\n");
+				"+--------+---------+\n"
+			
+			
+				  );
 			scanf(" %c", &playerChoice);
 		}
-		if (playerChoice != 'R' && playerChoice != 'C' && playerChoice != 'F' && playerChoice != 'B' && playerChoice != 'A')
+		if (playerChoice != 'S' && playerChoice != 'C' && playerChoice != 'F' && playerChoice != 'B' && playerChoice != 'A')
 		{
 			printf("ERROR: Please select an option from the table.\n");
 		}
 		// REST
-		else if (playerChoice == 'R')
+		else if (playerChoice == 'S')
 		{
 			if (playerHP >= 250)
 			{
@@ -565,6 +572,8 @@ int main(void)
 					mapA++;
 					playerPotions = playerPotions + enemyDrop;
 					playerPotions++;
+					goblinKills++;
+					forestCount++;
 
 				}
 			}
@@ -721,6 +730,8 @@ int main(void)
 				vampireBlood++;
 				playerPotions = playerPotions + enemyDrop;
 				playerPotions++;
+				vampireKills++;
+				forestCount++;
 
 			}
 			}
@@ -873,6 +884,8 @@ int main(void)
 				banditHead++;
 				playerPotions = playerPotions + enemyDrop;
 				playerPotions++;
+				banditKills++;
+				forestCount++;
 
 			}
 			}
@@ -1025,6 +1038,8 @@ int main(void)
 				giantFrogTongue++;
 				playerPotions = playerPotions + enemyDrop;
 				playerPotions++;
+				giantFrogKills++;
+				forestCount++;
 
 			}
 			}
@@ -1158,7 +1173,7 @@ int main(void)
 				theEnd++;
 			}
 		}
-	} while (playerHP > 0);
+	}while (playerHP > 0);
 	// ENDING
 	if (theEnd = 1)
 	{
