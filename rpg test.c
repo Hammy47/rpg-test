@@ -6,13 +6,13 @@ int main(void)
 {
 	// Player and Monster stats
 	char playerName[10];
-	int playerHP = 150;
-	int playerSTR = 20;
-	int playerDEX = 10;
+	int playerHP = 15000;
+	int playerSTR = 10000;
+	int playerDEX = 50;
 
 	const int spiderHP = 60;
 	const int spiderSTR = 5;
-	const int spiderDEX = 60;
+	const int spiderDEX = 50;
 
 	const int trollHP = 100;
 	const int trollSTR = 25;
@@ -20,22 +20,24 @@ int main(void)
 
 	const int scorpionHP = 75;
 	const int scorpionSTR = 0;
-	const int scorpionDEX = 25;
+	const int scorpionDEX = 20;
 
 	const int dragonHP = 350;
 	const int dragonSTR = 40;
-	const int dragonDEX = 40;
+	const int dragonDEX = 33;
 
-	// Current enemy stats
+	// Player actions
+	char playerChoice;
+	char playerAction;
+
+	// Combat
 	int enemyHP;
 	int enemySTR;
 	int enemyDEX;
 	int enemyDrop;
-
-	// Player actions/Combat
-	char playerChoice;
-	char playerAction;
 	int rounds;
+	int hit;
+	int enemyHit;
 
 	// Items
 	int playerPotions = 3;	
@@ -62,6 +64,7 @@ int main(void)
 	printf("You wave goodbye to your family and friends as you leave town.\n"
 		"With only an old iron sword and a few health potions, you continue on.\n");
 	do {
+		// HOME (NO MATS)
 		if (mapA >= 1 && mapB >= 1 && keys >= 1)
 		{
 			printf("\nAs the sun rises at your camp, you have to decide what you're planning on doing today.\n"
@@ -74,6 +77,7 @@ int main(void)
 				   "you believe you might have found ANCIENT RUINS.\n");
 			scanf(" %c", &playerChoice);
 		}
+		// HOME (MATS)
 		else {
 			printf("\nAs the sun rises at your camp, you have to decide what you're planning on doing today.\n"
 				"+--------+---------+\n"
@@ -87,12 +91,14 @@ int main(void)
 		{
 			printf("ERROR: Please select an option from the table.\n");
 		}
+		// REST
 		else if (playerChoice == 'R')
 		{
 			printf("You have rested, and have healed for 100 HP!\n");
 			playerHP = playerHP + 100;
 			printf("Current HP: %d\n", playerHP);
 		}
+		// CAVES
 		else if (playerChoice == 'C')
 		{
 			rounds = 0;
@@ -107,6 +113,8 @@ int main(void)
 			do
 			{
 				rounds++;
+				hit = rand() % 100;
+				enemyHit = rand() % 100;
 				printf("\nRound %d", rounds);
 				printf(
 					"\n+---------------------+\n"
@@ -120,12 +128,52 @@ int main(void)
 				{
 					printf("\nERROR: PLEASE ENTER AN ACTION\n");
 				}
+				// ATTACK
 				else if (playerAction == 'A')
 				{
-					printf("You have struck the spider! Dealing %d damage!\n", playerSTR);
-					enemyHP = enemyHP - playerSTR;
-					printf("Enemy HP has been reduced to %d!\n", enemyHP);
+					if(hit > enemyDEX)
+					{
+						if(spiderWeb > 0 && scorpionPoison > 0) 
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR+10);
+							printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n"
+								"Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+							enemyHP = enemyHP - (playerSTR+10);
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							spiderWeb--;
+							scorpionPoison--;
+						}
+						else if (spiderWeb > 0 && scorpionPoison == 0)
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR);
+							printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n");
+							enemyHP = enemyHP - playerSTR;
+							enemyDEX = enemyDEX - 5;
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							spiderWeb--;
+						}
+						else if (spiderWeb == 0 && scorpionPoison > 0)
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR + 10);
+							printf("Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+							enemyHP = enemyHP - (playerSTR + 10);
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							scorpionPoison--;
+						}
+						else
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR);
+							enemyHP = enemyHP - playerSTR;
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+						}
+					}
+					else
+					{
+						printf("The enemy has evaded your attack!\n"
+							"Enemy HP remains at %d!", enemyHP);
+					}
 				}
+				// POTION
 				else if (playerAction == 'P')
 				{
 					if (playerPotions > 0)
@@ -140,15 +188,25 @@ int main(void)
 						printf("Player is out of potions!\n");
 					}
 				}
+				// RUN
 				else if (playerAction == 'R')
 				{
 
 				}
+				// ENEMY TURN
+				if (enemyHit > playerDEX)
+				{
 				printf("\nThe spider has bit you for %d damage!", enemySTR);
 				playerHP = playerHP - enemySTR;
 				printf("\nYour current HP is %d\n", playerHP);
-
+				}
+				else
+				{
+					printf("\nYou evaded the spiders attack!"
+						"\nYour HP remains at %d\n", playerHP);
+				}
 			} while (playerAction != 'R' && enemyHP > 0 && playerHP > 0);
+			// COMBAT END
 			if (playerHP <= 0)
 			{
 				printf("\nYou put up a good fight, but in the end, it wasn't enough.\n"
@@ -173,6 +231,7 @@ int main(void)
 				spiderWeb++;
 			}
 		}
+		// BARRENS
 		else if (playerChoice == 'B')
 		{
 			rounds = 0;
@@ -187,6 +246,8 @@ int main(void)
 			do
 			{
 				rounds++;
+				hit = rand() % 100;
+				enemyHit = rand() % 100;
 				printf("\nRound %d", rounds);
 				printf(
 					"\n+---------------------+\n"
@@ -200,12 +261,52 @@ int main(void)
 				{
 					printf("\nERROR: PLEASE ENTER AN ACTION\n");
 				}
+				// ATTACK
 				else if (playerAction == 'A')
 				{
-					printf("You have struck the scorpion! Dealing %d damage!\n", playerSTR);
-					enemyHP = enemyHP - playerSTR;
-					printf("Enemy HP has been reduced to %d!\n", enemyHP);
+					if (hit > enemyDEX)
+					{
+						if (spiderWeb > 0 && scorpionPoison > 0)
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR + 10);
+							printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n"
+								"Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+							enemyHP = enemyHP - (playerSTR + 10);
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							spiderWeb--;
+							scorpionPoison--;
+						}
+						else if (spiderWeb > 0 && scorpionPoison == 0)
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR);
+							printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n");
+							enemyHP = enemyHP - playerSTR;
+							enemyDEX = enemyDEX - 5;
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							spiderWeb--;
+						}
+						else if (spiderWeb == 0 && scorpionPoison > 0)
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR + 10);
+							printf("Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+							enemyHP = enemyHP - (playerSTR + 10);
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							scorpionPoison--;
+						}
+						else
+						{
+							printf("You have struck the spider! Dealing %d damage!\n", playerSTR);
+							enemyHP = enemyHP - playerSTR;
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+						}
+					}
+					else
+					{
+						printf("The enemy has evaded your attack!\n"
+							"Enemy HP remains at %d!", enemyHP);
+					}
 				}
+				// POTION
 				else if (playerAction == 'P')
 				{
 					if (playerPotions > 0)
@@ -220,16 +321,26 @@ int main(void)
 						printf("Player is out of potions!\n");
 					}
 				}
+				// RUN
 				else if (playerAction == 'R')
 				{
 
 				}
+				// ENEMY ATTACK
 				enemySTR = rounds * 5;
-				printf("\nThe scorpion has struck you you for %d damage!", enemySTR);
-				playerHP = playerHP - enemySTR;
-				printf("\nYour current HP is %d\n", playerHP);
-
+				if (enemyHit > playerDEX)
+				{
+					printf("\nThe scorpion has pierced you for %d damage!", enemySTR);
+					playerHP = playerHP - enemySTR;
+					printf("\nYour current HP is %d\n", playerHP);
+				}
+				else
+				{
+					printf("\nYou evaded the scorpions attack!"
+						"\nYour HP remains at %d\n", playerHP);
+				}
 			} while (playerAction != 'R' && enemyHP > 0 && playerHP > 0);
+			// COMBAT END
 			if (playerHP <= 0)
 			{
 				printf("\nYou put up a good fight, but in the end, it wasn't enough.\n"
@@ -254,6 +365,7 @@ int main(void)
 				scorpionPoison++;
 			}
 		}
+		// FOREST
 		else if (playerChoice == 'F')
 		{
 			rounds = 0;
@@ -268,6 +380,8 @@ int main(void)
 			do
 			{
 				rounds++;
+				hit = rand() % 100;
+				enemyHit = rand() % 100;
 				printf("\nRound %d", rounds);
 				printf(
 					"\n+---------------------+\n"
@@ -281,12 +395,52 @@ int main(void)
 				{
 					printf("\nERROR: PLEASE ENTER AN ACTION\n");
 				}
+				// ATTACK
 				else if (playerAction == 'A')
 				{
-					printf("You have struck the troll! Dealing %d damage!\n", playerSTR);
-					enemyHP = enemyHP - playerSTR;
-					printf("Enemy HP has been reduced to %d!\n", enemyHP);
+					if (hit > enemyDEX)
+					{
+						if (spiderWeb > 0 && scorpionPoison > 0)
+						{
+							printf("You have struck the troll! Dealing %d damage!\n", playerSTR + 10);
+							printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n"
+								"Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+							enemyHP = enemyHP - (playerSTR + 10);
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							spiderWeb--;
+							scorpionPoison--;
+						}
+						else if (spiderWeb > 0 && scorpionPoison == 0)
+						{
+							printf("You have struck the troll! Dealing %d damage!\n", playerSTR);
+							printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n");
+							enemyHP = enemyHP - playerSTR;
+							enemyDEX = enemyDEX - 5;
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							spiderWeb--;
+						}
+						else if (spiderWeb == 0 && scorpionPoison > 0)
+						{
+							printf("You have struck the troll! Dealing %d damage!\n", playerSTR + 10);
+							printf("Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+							enemyHP = enemyHP - (playerSTR + 10);
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+							scorpionPoison--;
+						}
+						else
+						{
+							printf("You have struck the troll! Dealing %d damage!\n", playerSTR);
+							enemyHP = enemyHP - playerSTR;
+							printf("Enemy HP has been reduced to %d!\n", enemyHP);
+						}
+					}
+					else
+					{
+						printf("The enemy has evaded your attack!\n"
+							"Enemy HP remains at %d!", enemyHP);
+					}
 				}
+				// POTION
 				else if (playerAction == 'P')
 				{
 					if (playerPotions > 0)
@@ -301,15 +455,26 @@ int main(void)
 						printf("Player is out of potions!\n");
 					}
 				}
+				// RUN
 				else if (playerAction == 'R')
 				{
 
 				}
-				printf("\nThe troll has hit you for %d damage!", enemySTR);
-				playerHP = playerHP - enemySTR;
-				printf("\nYour current HP is %d\n", playerHP);
+				// ENEMY TURN
+				if (enemyHit > playerDEX)
+				{
+					printf("\nThe troll has hit you for %d damage!", enemySTR);
+					playerHP = playerHP - enemySTR;
+					printf("\nYour current HP is %d\n", playerHP);
+				}
+				else
+				{
+					printf("\nYou evaded the trolls attack!"
+						"\nYour HP remains at %d\n", playerHP);
+				}
 
 			} while (playerAction != 'R' && enemyHP > 0 && playerHP > 0);
+			// COMBAT END
 			if (playerHP <= 0)
 			{
 				printf("\nYou put up a good fight, but in the end, it wasn't enough.\n"
@@ -326,7 +491,7 @@ int main(void)
 					"\nYou have slain the troll, looting the following:\n"
 					"Health potion x1\n"
 					"Map Fragment A x1\n"
-					"Bonus health potion %d\n", enemyDrop + 1
+					"Bonus health potion x%d\n", enemyDrop + 1
 				);
 				playerPotions++;
 				mapA++;
@@ -335,10 +500,12 @@ int main(void)
 
 			}
 		}
+		// ANCIENT RUINS (NO MATS)
 		else if (playerChoice == 'A' && mapA == 0 && mapB == 0 && keys == 0)
 		{
 			printf("ERROR: Please select an option from the table.\n");
 		}
+		// ANCIENT RUINS
 		else if (playerChoice == 'A' && mapA >= 1 && mapB >= 1 && keys >= 1)
 		{
 		rounds = 0;
@@ -352,6 +519,8 @@ int main(void)
 		do
 		{
 			rounds++;
+			hit = rand() % 100;
+			enemyHit = rand() % 100;
 			printf("\nRound %d", rounds);
 			printf(
 				"\n+---------------------+\n"
@@ -365,12 +534,52 @@ int main(void)
 			{
 				printf("\nERROR: PLEASE ENTER AN ACTION\n");
 			}
+			// ATTACK
 			else if (playerAction == 'A')
 			{
-				printf("You have struck the dragon! Dealing %d damage!\n", playerSTR);
-				enemyHP = enemyHP - playerSTR;
-				printf("Enemy HP has been reduced to %d!\n", enemyHP);
+				if (hit > enemyDEX)
+				{
+					if (spiderWeb > 0 && scorpionPoison > 0)
+					{
+						printf("You have struck the dragon! Dealing %d damage!\n", playerSTR + 10);
+						printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n"
+							"Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+						enemyHP = enemyHP - (playerSTR + 10);
+						printf("Enemy HP has been reduced to %d!\n", enemyHP);
+						spiderWeb--;
+						scorpionPoison--;
+					}
+					else if (spiderWeb > 0 && scorpionPoison == 0)
+					{
+						printf("You have struck the dragon! Dealing %d damage!\n", playerSTR);
+						printf("Thanks to your spider webbing, the enemy's DEX has been decreased by 5!\n");
+						enemyHP = enemyHP - playerSTR;
+						enemyDEX = enemyDEX - 5;
+						printf("Enemy HP has been reduced to %d!\n", enemyHP);
+						spiderWeb--;
+					}
+					else if (spiderWeb == 0 && scorpionPoison > 0)
+					{
+						printf("You have struck the dragon! Dealing %d damage!\n", playerSTR + 10);
+						printf("Thanks to your scorpion poisoning, your weapon has dealt an extra 10HP!\n");
+						enemyHP = enemyHP - (playerSTR + 10);
+						printf("Enemy HP has been reduced to %d!\n", enemyHP);
+						scorpionPoison--;
+					}
+					else
+					{
+						printf("You have struck the dragon! Dealing %d damage!\n", playerSTR);
+						enemyHP = enemyHP - playerSTR;
+						printf("Enemy HP has been reduced to %d!\n", enemyHP);
+					}
+				}
+				else
+				{
+					printf("The enemy has evaded your attack!\n"
+						"Enemy HP remains at %d!", enemyHP);
+				}
 			}
+			// POTION
 			else if (playerAction == 'P')
 			{
 				if (playerPotions > 0)
@@ -385,15 +594,25 @@ int main(void)
 					printf("Player is out of potions!\n");
 				}
 			}
+			// RUN
 			else if (playerAction == 'R')
 			{
 
 			}
-			printf("\nThe dragon has breathes flames on you for %d damage!", enemySTR);
-			playerHP = playerHP - enemySTR;
-			printf("\nYour current HP is %d\n", playerHP);
-
+			// ENEMY TURN
+			if (enemyHit > playerDEX)
+			{
+				printf("\nThe dragon blew fire at you for %d damage!", enemySTR);
+				playerHP = playerHP - enemySTR;
+				printf("\nYour current HP is %d\n", playerHP);
+			}
+			else
+			{
+				printf("\nYou evaded the dragons attack!"
+					"\nYour HP remains at %d\n", playerHP);
+			}
 		} while (playerAction != 'R' && enemyHP > 0 && playerHP > 0);
+		// COMBAT END
 		if (playerHP <= 0)
 		{
 			printf("\nYou put up a good fight, but in the end, it wasn't enough.\n"
@@ -411,7 +630,7 @@ int main(void)
 		}
 		}
 	}while (playerHP > 0);
-
+	// ENDING
 	if(theEnd = 1)
 	{
 		printf("\nAfter finally slaying the dragon, you continue on to it's hoard\n"
@@ -420,6 +639,7 @@ int main(void)
 			   "You soon after decide to retire, seeking out a family.\n"
 			   "The end.");
 	}
+	// DEAD
 	else
 	{
 	}
