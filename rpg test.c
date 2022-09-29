@@ -45,7 +45,6 @@ int main(void)
 	int keys = 0;
 	int mapA = 0;
 	int mapB = 0;
-
 	int theEnd = 0;
 
 	// RNG
