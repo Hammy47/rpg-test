@@ -17,3 +17,5 @@
 >Balance changes, mostly due to DEX
 
 >Fixed a few missing characters in printf
+1.15 : Patch
+> Death bug fixed

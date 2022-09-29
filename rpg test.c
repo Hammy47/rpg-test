@@ -626,21 +626,17 @@ int main(void)
 			{
 				playerHP = playerHP - playerHP;
 				theEnd++;
+
+					printf("\nAfter finally slaying the dragon, you continue on to it's hoard\n"
+						"Within the ruins, you find such an extreme amount of gold\n"
+						"that you and your kin will be wealthy for generations.\n\n"
+						"You soon after decide to retire, seeking out a family.\n"
+						"The end.");
+
 			}
 		}
 	} while (playerHP > 0);
 	// ENDING
-	if (theEnd = 1)
-	{
-		printf("\nAfter finally slaying the dragon, you continue on to it's hoard\n"
-			"Within the ruins, you find such an extreme amount of gold\n"
-			"that you and your kin will be wealthy for generations.\n\n"
-			"You soon after decide to retire, seeking out a family.\n"
-			"The end.");
-	}
-	// DEAD
-	else
-	{
-	}
+
 	return 0;
 }
