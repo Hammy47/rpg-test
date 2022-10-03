@@ -118,19 +118,10 @@ int main(void)
 		"What is your name? ");
 	scanf("%s", playerName);
 
-	// Cheat mode
+	// Cheat mode (TEMP DISABLED)
 	if (playerName[9] = 'D')
 	{
-		keys = 1;
-		mapA = 1;
-		mapB = 1;
-		playerPotions = 99;
-		spiderWeb = 99;
-		scorpionPoison = 99;
-		forestCount = 10;
-		cavesCount = 10;
-		barrensCount = 10;
-		playerSTR = 2000;
+
 	}
 	else{}
 
