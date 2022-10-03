@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main(void)
 {
@@ -46,8 +47,15 @@ int main(void)
 	const int giantFrogDEX = 0;
 
 	// Locations
-	char thickForest;
-	char ancientRuins;
+	const char thickForestA[20] = "|THCKFRST|";
+	char thickForestB[20];
+	const char ancientRuinsA[20] = " RUINS  |";
+	char ancientRuinsB[20];					
+	const char unknownA[20] = "|  ? ?   |";
+	const char unknownB[20] = "  ? ?   |";
+	const char thickForestStatA[40] = "TIMES TRAVELED TO THE THICK FOREST";
+	char thickForestStatB[40];
+	const char unknown[40] = "??";
 
 	// Player actions
 	char playerChoice;
@@ -64,17 +72,25 @@ int main(void)
 	int hit;
 	int enemyHit;
 	int enemyRng;
-	int potionHeal;
+	int potionHeal = 250;
 
 	// Misc Combat
 	int vampireHeal;
 
 	// Stats
 	int forestCount = 0;
+	int cavesCount = 0;
+	int barrensCount = 0;
+	int thickForestCount = 0;
+
 	int goblinKills = 0;
 	int banditKills = 0;
 	int vampireKills = 0;
 	int giantFrogKills = 0;
+		
+	int spiderKills = 0;
+
+	int scorpionKills = 0;
 
 	// Consumables
 	int playerPotions = 3;
@@ -86,6 +102,7 @@ int main(void)
 	int mapA = 0;
 	int mapB = 0;
 	int theEnd = 0;
+	int goblinHand = 0;
 	int vampireBlood = 0;
 	int banditHead = 0;
 	int giantFrogTongue = 0;
@@ -100,51 +117,77 @@ int main(void)
 	printf("A new moon turns, you decide it's finally time to begin your adventure.\n"
 		"What is your name? ");
 	scanf("%s", playerName);
+
+	// Cheat mode
+	if (playerName[9] = 'D')
+	{
+		keys = 1;
+		mapA = 1;
+		mapB = 1;
+		playerPotions = 99;
+		spiderWeb = 99;
+		scorpionPoison = 99;
+		forestCount = 10;
+		cavesCount = 10;
+		barrensCount = 10;
+		playerSTR = 2000;
+	}
+	else{}
+
 	printf("%s? A bloody fine name.\n\n", playerName);
 	printf("You wave goodbye to your family and friends as you leave town.\n"
 		"With only an old iron sword and a few health potions, you continue on.\n");
 	do {
-		// HOME (NO MATS)
+		// Ruins Check
 		if (mapA >= 1 && mapB >= 1 && keys >= 1)
 		{
-			printf("\nAs the sun rises at your camp, you have to decide what you're planning on doing today.\n"
-				"+--------+---------+\n"
-				"|  REST  |  CAVES  |\n"
-				"+--------+---------+\n"
-				"| FOREST | BARRENS |\n"
-				"+--------+---------+\n");
-			printf("After acquiring both map fragments, as well as a key,\n"
-				"you believe you might have found ANCIENT RUINS.\n");
-			scanf(" %c", &playerChoice);
+			strcpy(ancientRuinsB, ancientRuinsA);
 		}
-		// HOME (MATS)
-		else {
-			printf("\nAs the sun rises at your camp, you have to decide what you're planning on doing today.\n"
-				"+--------+---------+\n"
-				"| SLEEP  |  CAVES  |\n"
-				"+--------+---------+\n"
-				"| FOREST | BARRENS |\n"
-				"+--------+---------+\n"
-			
-			
-				  );
-			scanf(" %c", &playerChoice);
+		else
+		{
+			strcpy(ancientRuinsB, unknownB);
 		}
-		if (playerChoice != 'S' && playerChoice != 'C' && playerChoice != 'F' && playerChoice != 'B' && playerChoice != 'A')
+		// Thick Forest Check
+		if (forestCount >= 10)
+		{
+			strcpy(thickForestB, thickForestA);
+			strcpy(thickForestStatB, thickForestStatA);
+		}
+		else
+		{
+			strcpy(thickForestB, unknownA);
+			strcpy(thickForestStatB, unknown);
+		}
+
+		// Day begin
+		printf("\nAs the sun rises at your camp, you have to decide what you're planning on doing today.\n"
+			"+--------+---------+\n"
+			"| SLEEP  |  CAVES  |\n"
+			"+--------+---------+\n"
+			"| FOREST | BARRENS |\n"
+			"+--------+---------+\n");
+	 printf("%s %s\n", thickForestB, ancientRuinsB);
+	 printf("+--------+---------+\n"
+			"| PLAYER |  INFO   |\n"
+			"+--------+---------+\n");
+			scanf(" %c", &playerChoice);
+		if (playerChoice != 'S' && playerChoice != 'C' && playerChoice != 'F' && playerChoice != 'B' && playerChoice != 'R' && playerChoice != 'P' && playerChoice != 'I')
 		{
 			printf("ERROR: Please select an option from the table.\n");
 		}
 		// REST
 		else if (playerChoice == 'S')
 		{
+			potionHeal = 250;
 			if (playerHP >= 250)
 			{
 				printf("Your HP is already full!\n");
 			}
 			else if (playerHP < 250)
 			{
-				printf("You have rested, and have healed for 100 HP!\n");
-				playerHP = playerHP + 100;
+				potionHeal = potionHeal - playerHP;
+				printf("You have rested, and have healed for %d HP!\n", potionHeal);
+				playerHP = playerHP + potionHeal;
 				printf("Current HP: %d\n", playerHP);
 			}
 		}
@@ -226,16 +269,36 @@ int main(void)
 				// POTION
 				else if (playerAction == 'P')
 				{
-					if (playerPotions > 0)
+					if (playerHP < 100)
 					{
-						printf("You have drank a health potion, healing 150HP\n");
-						playerHP = playerHP + 150;
-						playerPotions--;
-						printf("Current HP is %d, and you have %d potions remaining.\n", playerHP, playerPotions);
+						potionHeal = 150;
+					}
+					else if (playerHP >= 100)
+					{
+						potionHeal = (250 - playerHP);
 					}
 					else
 					{
-						printf("Player is out of potions!\n");
+						potionHeal;
+					}
+					if (playerHP >= 250)
+					{
+						printf("Your HP is full!\n"
+							"You remain at %d potions.", playerPotions);
+					}
+					else if (playerHP < 250)
+					{
+						if (playerPotions > 0)
+						{
+							printf("You have drank a health potion, healing %dHP\n", potionHeal);
+							playerHP = playerHP + potionHeal;
+							playerPotions--;
+							printf("Current HP is %d, and you have %d potions remaining.\n", playerHP, playerPotions);
+						}
+						else
+						{
+							printf("Player is out of potions!\n");
+						}
 					}
 				}
 				// RUN
@@ -279,6 +342,8 @@ int main(void)
 				keys++;
 				spiderWeb = spiderWeb + enemyDrop;
 				spiderWeb++;
+				cavesCount++;
+				spiderKills++;
 			}
 		}
 		// BARRENS
@@ -359,16 +424,36 @@ int main(void)
 				// POTION
 				else if (playerAction == 'P')
 				{
-					if (playerPotions > 0)
+					if (playerHP < 100)
 					{
-						printf("You have drank a health potion, healing 150HP\n");
-						playerHP = playerHP + 150;
-						playerPotions--;
-						printf("Current HP is %d, and you have %d potions remaining.\n", playerHP, playerPotions);
+						potionHeal = 150;
+					}
+					else if (playerHP >= 100)
+					{
+						potionHeal = (250 - playerHP);
 					}
 					else
 					{
-						printf("Player is out of potions!\n");
+						potionHeal;
+					}
+					if (playerHP >= 250)
+					{
+						printf("Your HP is full!\n"
+							"You remain at %d potions.", playerPotions);
+					}
+					else if (playerHP < 250)
+					{
+						if (playerPotions > 0)
+						{
+							printf("You have drank a health potion, healing %dHP\n", potionHeal);
+							playerHP = playerHP + potionHeal;
+							playerPotions--;
+							printf("Current HP is %d, and you have %d potions remaining.\n", playerHP, playerPotions);
+						}
+						else
+						{
+							printf("Player is out of potions!\n");
+						}
 					}
 				}
 				// RUN
@@ -413,13 +498,14 @@ int main(void)
 				mapB++;
 				scorpionPoison = scorpionPoison + enemyDrop;
 				scorpionPoison++;
+				barrensCount++;
+				scorpionKills++;
 			}
 		}
 		// FOREST
 		else if (playerChoice == 'F')
 		{
 			enemyRng = rand() % 100;
-			printf("\n%d\n", enemyRng);
 			// Goblin
 			if (enemyRng >= 0 && enemyRng < 25) {
 				rounds = 0;
@@ -509,7 +595,6 @@ int main(void)
 						{
 							potionHeal;
 						}
-						printf("\n%d\n%d\n", playerHP, potionHeal);
 						if (playerHP >= 250)
 						{
 							printf("Your HP is full!\n"
@@ -664,7 +749,6 @@ int main(void)
 					{
 						potionHeal = (250 - playerHP);
 					}
-					printf("\n%d\n%d\n", playerHP, potionHeal);
 					if (playerHP >= 250)
 					{
 						printf("Your HP is full!\n"
@@ -821,7 +905,6 @@ int main(void)
 					{
 						potionHeal = (250 - playerHP);
 					}
-					printf("\n%d\n%d\n", playerHP, potionHeal);
 					if (playerHP >= 250)
 					{
 						printf("Your HP is full!\n"
@@ -975,7 +1058,6 @@ int main(void)
 					{
 						potionHeal = (250 - playerHP);
 					}
-					printf("\n%d\n%d\n", playerHP, potionHeal);
 					if (playerHP >= 250)
 					{
 						printf("Your HP is full!\n"
@@ -1045,12 +1127,12 @@ int main(void)
 			}
 		}
 		// ANCIENT RUINS (NO MATS)
-		else if (playerChoice == 'A' && mapA == 0 && mapB == 0 && keys == 0)
+		else if (playerChoice == 'R' && mapA == 0 && mapB == 0 && keys == 0)
 		{
 			printf("ERROR: Please select an option from the table.\n");
 		}
 		// ANCIENT RUINS
-		else if (playerChoice == 'A' && mapA >= 1 && mapB >= 1 && keys >= 1)
+		else if (playerChoice == 'R' && mapA >= 1 && mapB >= 1 && keys >= 1)
 		{
 			rounds = 0;
 			enemyHP = dragonHP;
@@ -1126,16 +1208,36 @@ int main(void)
 				// POTION
 				else if (playerAction == 'P')
 				{
-					if (playerPotions > 0)
+					if (playerHP < 100)
 					{
-						printf("You have drank a health potion, healing 150HP\n");
-						playerHP = playerHP + 150;
-						playerPotions--;
-						printf("Current HP is %d, and you have %d potions remaining.\n", playerHP, playerPotions);
+						potionHeal = 150;
+					}
+					else if (playerHP >= 100)
+					{
+						potionHeal = (250 - playerHP);
 					}
 					else
 					{
-						printf("Player is out of potions!\n");
+						potionHeal;
+					}
+					if (playerHP >= 250)
+					{
+						printf("Your HP is full!\n"
+							"You remain at %d potions.", playerPotions);
+					}
+					else if (playerHP < 250)
+					{
+						if (playerPotions > 0)
+						{
+							printf("You have drank a health potion, healing %dHP\n", potionHeal);
+							playerHP = playerHP + potionHeal;
+							playerPotions--;
+							printf("Current HP is %d, and you have %d potions remaining.\n", playerHP, playerPotions);
+						}
+						else
+						{
+							printf("Player is out of potions!\n");
+						}
 					}
 				}
 				// RUN
@@ -1171,21 +1273,56 @@ int main(void)
 			{
 				playerHP = playerHP - playerHP;
 				theEnd++;
+				// ENDING
+				
+					printf("\nAfter finally slaying the dragon, you continue on to it's hoard\n"
+						"Within the ruins, you find such an extreme amount of gold\n"
+						"that you and your kin will be wealthy for generations.\n\n"
+						"You soon after decide to retire, seeking out a family.\n"
+						"The end.");
+				
+
 			}
 		}
+		else if (playerChoice == 'P')
+		{
+		printf(
+			"+-------------------+--------------------+\n"
+			"|HP Pot          :%02d|                    |\n"
+			"+-------------------+--------------------+\n"
+			"|SPIDER WEB      :%02d|SCORPION POISON  :%02d|\n"
+			"+-------------------+--------------------+\n"
+			"|GOBLIN HAND     :%02d|VAMPIRE BLOOD    :%02d|\n"
+			"+-------------------+--------------------+\n"
+			"|BANDIT HEAD     :%02d|GIANT FROG TONGUE:%02d|\n"
+			"+-------------------+--------------------+\n"
+			"|MAP FRAG A      :%02d|MAP FRAG B       :%02d|\n"
+			"+-------------------+--------------------+\n"
+			"|OTHERWORLDLY KEY:%02d|                    |\n"
+			"+-------------------+--------------------+\n"
+			, playerPotions, spiderWeb, scorpionPoison, goblinHand, vampireBlood, banditHead, giantFrogTongue, mapA, mapB, keys);
+		}
+		else if (playerChoice == 'I')
+		{
+		printf("FOREST:\n"
+			"TIMES TRAVELLED: %d\n"
+			"KILLS:\n"
+			"GOBLINS: %d\n"
+			"BANDITS: %d\n"
+			"VAMPIRES: %d\n"
+			"GIANT FROGS: %d\n\n"
+			, forestCount, goblinKills, banditKills, vampireKills, giantFrogKills);
+		printf("CAVES:\n"
+			"TIMES TRAVELLED: %d\n"
+			"KILLS:\n"
+			"SPIDERS: %d\n\n", cavesCount, spiderKills);
+		printf("BARRENS:\n"
+			"TIMES TRAVELLED: %d\n"
+			"KILLS:\n"
+			"SCORPIONS: %d\n\n", barrensCount, scorpionKills);
+		printf("%s: %d", thickForestStatB, thickForestCount);
+		}
 	}while (playerHP > 0);
-	// ENDING
-	if (theEnd = 1)
-	{
-		printf("\nAfter finally slaying the dragon, you continue on to it's hoard\n"
-			"Within the ruins, you find such an extreme amount of gold\n"
-			"that you and your kin will be wealthy for generations.\n\n"
-			"You soon after decide to retire, seeking out a family.\n"
-			"The end.");
-	}
-	// DEAD
-	else
-	{
-	}
+
 	return 0;
 }

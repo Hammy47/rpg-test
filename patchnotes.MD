@@ -29,3 +29,12 @@
 >HP now has a max.. set to 250 (only for forest currently)
 
 >Balancing changes to account for HP max (for all creatures)
+
+1.2b : Forest DLC (beta)
+>2 new UI menus
+
+>Balancing changes
+
+>Preperation for new zone and release of the forest DLC
+
+>Cheat mode added, if playerName = 'D'. Everything is unlocked, potions, web and poison are set to 99, and attack deals 2000 damage.
